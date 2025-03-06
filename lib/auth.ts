@@ -45,12 +45,12 @@ export async function logoutUser(): Promise<void> {
   localStorage.removeItem("currentUser")
 }
 
-export async function getCurrentUser(): Promise<User | null> {
+export async function getCurrentUser(): Promise<User | {role:"nothing",id:"nothing",email:"nothing",name:"nothing"} > {
   // In a real app, this would validate the session/token
   const userJson = localStorage.getItem("currentUser")
 
   if (!userJson) {
-    return null
+    return {role:"nothing",id:"nothing",email:"nothing",name:"nothing"}
   }
 
   return JSON.parse(userJson) as User
