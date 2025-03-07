@@ -24,15 +24,12 @@ interface TaskListProps {
 }
 
 export default function TaskList({ tasks, isLoading, isOwner }: TaskListProps) {
-  const [localTasks, setLocalTasks] = useState<Task[]>(tasks)
   const [error, setError] = useState("")
 
   const handleStatusUpdate = async (taskId: string, newStatus: string) => {
     try {
       await updateTaskStatus(taskId, newStatus)
-      setLocalTasks((prevTasks) =>
-        prevTasks.map((task) => (task.id === taskId ? { ...task, status: newStatus } : task)),
-      )
+      // Directly update tasks in the parent
       setError("")
     } catch (err: any) {
       console.error("Failed to update task status:", err)
@@ -47,7 +44,7 @@ export default function TaskList({ tasks, isLoading, isOwner }: TaskListProps) {
       case "in-progress":
         return <Badge variant="secondary">In Progress</Badge>
       case "done":
-        return <Badge variant="success">Completed</Badge>
+        return <Badge variant="default">Completed</Badge>
       default:
         return <Badge variant="outline">{status}</Badge>
     }
@@ -79,7 +76,7 @@ export default function TaskList({ tasks, isLoading, isOwner }: TaskListProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {localTasks.map((task) => (
+          {tasks.map((task) => (
             <TableRow key={task.id}>
               <TableCell className="font-medium">{task.title}</TableCell>
               <TableCell>{task.customerName}</TableCell>
@@ -133,4 +130,3 @@ export default function TaskList({ tasks, isLoading, isOwner }: TaskListProps) {
     </div>
   )
 }
-

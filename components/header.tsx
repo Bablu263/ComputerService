@@ -14,11 +14,11 @@ import type { User } from "@/lib/types"
 import { logoutUser } from "@/lib/auth"
 import { useRouter } from "next/navigation"
 
-interface DashboardHeaderProps {
+interface HeaderProps {
   user: User
 }
 
-export default function DashboardHeader({ user }: DashboardHeaderProps) {
+export default function Header({ user }: HeaderProps) {
   const router = useRouter()
 
   const handleLogout = async () => {

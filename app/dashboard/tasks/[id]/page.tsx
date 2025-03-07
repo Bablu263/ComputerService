@@ -1,5 +1,6 @@
 "use client"
 
+import { use } from "react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -9,6 +10,7 @@ import { ArrowLeft, Edit, Play, CheckCircle } from "lucide-react"
 import { getTaskById, updateTaskStatus } from "@/lib/tasks"
 import type { Task } from "@/lib/types"
 import { getCurrentUser } from "@/lib/auth"
+import Header from "@/components/header"
 
 interface TaskDetailPageProps {
   params: {
@@ -22,6 +24,7 @@ export default function TaskDetailPage({ params }: TaskDetailPageProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState("")
   const [user, setUser] = useState<any>(null)
+  const {id} = use(params)
 
   useEffect(() => {
     const loadData = async () => {
@@ -31,7 +34,7 @@ export default function TaskDetailPage({ params }: TaskDetailPageProps) {
         setUser(userData)
 
         // Then try to get the task data
-        const taskData = await getTaskById(params.id)
+        const taskData = await getTaskById(id)
         setTask(taskData)
       } catch (err: any) {
         console.error("Error loading task:", err)
@@ -42,7 +45,7 @@ export default function TaskDetailPage({ params }: TaskDetailPageProps) {
     }
 
     loadData()
-  }, [params.id])
+  }, [id])
 
   const handleStatusUpdate = async (newStatus: string) => {
     if (!task) return
@@ -63,7 +66,7 @@ export default function TaskDetailPage({ params }: TaskDetailPageProps) {
       case "in-progress":
         return <Badge variant="secondary">In Progress</Badge>
       case "done":
-        return <Badge variant="success">Completed</Badge>
+        return <Badge variant="default">Completed</Badge>
       default:
         return <Badge variant="outline">{status}</Badge>
     }
@@ -98,6 +101,8 @@ export default function TaskDetailPage({ params }: TaskDetailPageProps) {
   const canUpdateStatus = task.assigneeId === user?.id || isOwner
 
   return (
+    <>
+    <Header user={user}/>
     <div className="container mx-auto py-10">
       <div className="mb-6">
         <Button variant="ghost" onClick={() => router.back()}>
@@ -188,6 +193,7 @@ export default function TaskDetailPage({ params }: TaskDetailPageProps) {
         </Card>
       </div>
     </div>
+    </>
   )
 }
 

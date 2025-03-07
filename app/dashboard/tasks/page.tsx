@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Plus } from "lucide-react"
 import TaskList from "@/components/tasks/task-list"
+import Header from "@/components/header"
 import { getTasks } from "@/lib/tasks"
 import { getCurrentUser } from "@/lib/auth"
 import type { Task } from "@/lib/types"
@@ -14,12 +15,13 @@ export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isOwner, setIsOwner] = useState(false)
+  const [user,setUser] = useState({role:"nothing",id:"nothing",email:"nothing",name:"nothing"})
 
   useEffect(() => {
     const loadData = async () => {
       try {
         const [tasksData, userData] = await Promise.all([getTasks(), getCurrentUser()])
-
+        setUser(userData)
         setTasks(tasksData)
         setIsOwner(userData?.role === "owner")
       } catch (error) {
@@ -37,6 +39,8 @@ export default function TasksPage() {
   const completedTasks = tasks.filter((task) => task.status === "done")
 
   return (
+    <>
+    <Header user={user}/>
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">All Tasks</h1>
@@ -71,6 +75,7 @@ export default function TasksPage() {
         </TabsContent>
       </Tabs>
     </div>
+    </>
   )
 }
 

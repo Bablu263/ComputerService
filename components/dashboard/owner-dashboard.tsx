@@ -4,10 +4,8 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Plus, Users } from "lucide-react"
-import DashboardHeader from "@/components/dashboard/dashboard-header"
-import TaskList from "@/components/tasks/task-list"
+import Header from "@/components/header"
 import { getTasks } from "@/lib/tasks"
 import type { Task, User } from "@/lib/types"
 
@@ -22,6 +20,7 @@ export default function OwnerDashboard({ user }: OwnerDashboardProps) {
   useEffect(() => {
     const loadTasks = async () => {
       try {
+        console.log("dashboar",{user})
         const fetchedTasks = await getTasks()
         setTasks(fetchedTasks)
       } catch (error) {
@@ -40,7 +39,7 @@ export default function OwnerDashboard({ user }: OwnerDashboardProps) {
 
   return (
     <>
-      <DashboardHeader user={user} />
+      <Header user={user} />
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
@@ -97,28 +96,41 @@ export default function OwnerDashboard({ user }: OwnerDashboardProps) {
               </div>
             </CardContent>
           </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">New Tasks</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{newTasks.length}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Completed</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{completedTasks.length}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Completed in Month</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {
+                  completedTasks.filter((task) => {
+                    const today = new Date()
+                    const completedDate = new Date(task.updatedAt)
+                    return (
+                      completedDate.getMonth() === today.getMonth()
+                    )
+                  }).length
+                }
+              </div>
+            </CardContent>
+          </Card>
         </div>
-
-        <Tabs defaultValue="all" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="all">All Tasks</TabsTrigger>
-            <TabsTrigger value="new">New</TabsTrigger>
-            <TabsTrigger value="in-progress">In Progress</TabsTrigger>
-            <TabsTrigger value="done">Completed</TabsTrigger>
-          </TabsList>
-          <TabsContent value="all" className="space-y-4">
-            <TaskList tasks={tasks} isLoading={isLoading} isOwner={true} />
-          </TabsContent>
-          <TabsContent value="new" className="space-y-4">
-            <TaskList tasks={newTasks} isLoading={isLoading} isOwner={true} />
-          </TabsContent>
-          <TabsContent value="in-progress" className="space-y-4">
-            <TaskList tasks={inProgressTasks} isLoading={isLoading} isOwner={true} />
-          </TabsContent>
-          <TabsContent value="done" className="space-y-4">
-            <TaskList tasks={completedTasks} isLoading={isLoading} isOwner={true} />
-          </TabsContent>
-        </Tabs>
       </div>
     </>
   )

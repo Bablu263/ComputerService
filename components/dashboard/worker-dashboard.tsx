@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import DashboardHeader from "@/components/dashboard/dashboard-header"
+import Header from "@/components/header"
 import TaskList from "@/components/tasks/task-list"
 import { getTasksByAssignee } from "@/lib/tasks"
 import type { Task, User } from "@/lib/types"
@@ -37,7 +37,7 @@ export default function WorkerDashboard({ user }: WorkerDashboardProps) {
 
   return (
     <>
-      <DashboardHeader user={user} />
+      <Header user={user} />
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold tracking-tight">My Tasks</h2>

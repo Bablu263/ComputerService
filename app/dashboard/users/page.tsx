@@ -21,8 +21,11 @@ import { Badge } from "@/components/ui/badge"
 import { Plus, Trash } from "lucide-react"
 import { getAllUsers, createUser, deleteUser } from "@/lib/users"
 import type { User } from "@/lib/types"
+import { getCurrentUser } from "@/lib/auth";
+import Header from "@/components/header"
 
 export default function UsersPage() {
+  const [user,setUser] = useState({role:"nothing",id:"nothing",email:"nothing",name:"nothing"})
   const [users, setUsers] = useState<User[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -34,9 +37,14 @@ export default function UsersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
+    fetchData()
     loadUsers()
   }, [])
-
+  
+  const fetchData = async () => {
+    const userData = await getCurrentUser();
+    setUser(userData);
+  };
   const loadUsers = async () => {
     try {
       const fetchedUsers = await getAllUsers()
@@ -106,6 +114,8 @@ export default function UsersPage() {
   }
 
   return (
+    <>
+    <Header user={user}/>
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">User Management</h1>
@@ -213,6 +223,7 @@ export default function UsersPage() {
         </div>
       )}
     </div>
+    </>
   )
 }
 
